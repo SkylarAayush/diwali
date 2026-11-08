@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anvit's First Diwali ✨ | The Singh Family</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Playfair+Display:ital,wght@0,600;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 25%, #1d072e 0%, #0c0217 60%, #030008 100%);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 24px 16px 50px;
+      position: relative;
+    }
+
+    canvas#fxCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .audio-pill {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: #fde68a;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 2;
+      max-width: 580px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .festival-tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      padding: 6px 18px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+      backdrop-filter: blur(8px);
+    }
+
+    .main-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 25px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fffbeb 0%, #fde68a 50%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .family-subtitle {
+      font-size: 13px;
+      color: #fcd34d;
+      margin-bottom: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .instruction-text {
+      font-size: 13px;
+      color: rgba(254, 240, 138, 0.85);
+      margin-bottom: 16px;
+    }
+
+    /* Progress Indicators */
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      transition: all 0.4s ease;
+    }
+
+    .dot.active {
+      background: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b, 0 0 20px #d97706;
+      transform: scale(1.25);
+    }
+
+    /* Main UI Memory Card (With Hero Dad & Son Spotlight) */
+    .memory-card {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(26, 10, 42, 0.88);
+      border: 1.5px solid rgba(251, 191, 36, 0.38);
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.55);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-align: left;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .memory-thumb-wrap {
+      width: 86px;
+      height: 86px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #f59e0b;
+      flex-shrink: 0;
+      position: relative;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.7);
+      background: #11051f;
+    }
+
+    .memory-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 25%;
+      filter: contrast(1.08) brightness(1.04) saturate(1.12);
+      transition: transform 0.5s;
+    }
+
+    .memory-details {
+      flex: 1;
+    }
+
+    .memory-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #fbbf24;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .memory-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff7ed;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .memory-note {
+      font-size: 12px;
+      color: #e2e8f0;
+      line-height: 1.45;
+    }
+
+    /* Altar Arena */
+    .altar-arena {
+      position: relative;
+      width: 330px;
+      height: 330px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .rangoli-border {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px dashed rgba(251, 191, 36, 0.3);
+      animation: slowRotate 70s linear infinite;
+    }
+
+    @keyframes slowRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .central-symbol {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      color: #fde68a;
+      transition: all 1s;
+    }
+
+    /* Diya Nodes */
+    .diya-node {
+      position: absolute;
+      width: 72px;
+      height: 82px;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .diya-node:hover {
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+
+    .diya-aura {
+      position: absolute;
+      top: 2px;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 140, 0, 0.7) 0%, transparent 75%);
+      filter: blur(8px);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .diya-node.lit .diya-aura {
+      opacity: 1;
+      animation: miniPulse 1.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes miniPulse {
+      0% { transform: scale(0.9); opacity: 0.75; }
+      100% { transform: scale(1.3); opacity: 1; }
+    }
+
+    .diya-svg {
+      width: 50px;
+      height: 50px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+    }
+
+    .flame-element {
+      opacity: 0;
+      transform-origin: 50% 85%;
+      transition: opacity 0.4s ease;
+    }
+
+    .diya-node.lit .flame-element {
+      opacity: 1;
+      animation: diyaFlicker 1.2s infinite alternate ease-in-out;
+    }
+
+    @keyframes diyaFlicker {
+      0% { transform: scale(1) rotate(-2deg); }
+      50% { transform: scale(1.1, 0.95) rotate(2deg); }
+      100% { transform: scale(0.95, 1.05) rotate(-1deg); }
+    }
+
+    .diya-count-badge {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fde68a;
+      background: rgba(18, 9, 30, 0.85);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 999px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .diya-node.lit .diya-count-badge {
+      background: #f59e0b;
+      color: #1a0800;
+      border-color: #fef08a;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.9);
+      transform: scale(1.08);
+    }
+
+    /* Grand Finale Card */
+    .final-card {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      background: rgba(25, 9, 42, 0.95);
+      border: 1.5px solid rgba(251, 191, 36, 0.45);
+      border-radius: 26px;
+      padding: 30px 20px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      margin-top: 14px;
+      width: 100%;
+      animation: revealCard 1s forwards cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes revealCard {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .final-gold-head {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 23px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fffbeb 0%, #fde68a 50%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+
+    .grand-photo-frame {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto 20px;
+      padding: 10px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #fde68a, #d97706, #78350f, #fde68a);
+      box-shadow: 0 12px 35px rgba(245, 158, 11, 0.4);
+    }
+
+    .grand-photo-inner {
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: #000;
+    }
+
+    .grand-photo-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: contrast(1.08) brightness(1.04) saturate(1.12);
+      display: block;
+    }
+
+    .final-blessing-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #f1f5f9;
+      margin-bottom: 22px;
+      padding: 0 8px;
+    }
+
+    .signature-area {
+      border-top: 1px solid rgba(251, 191, 36, 0.3);
+      padding-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .regards-text {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(254, 240, 138, 0.7);
+    }
+
+    .family-signature {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 600;
+      font-style: italic;
+      color: #fef08a;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+    }
+
+    .btn-relight {
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: #fde68a;
+      font-size: 12px;
+      padding: 8px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Sitar/Flute Music -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/24/audio_338779b5c3.mp3?filename=indian-ambient-festive-124357.mp3" type="audio/mp3">
+  </audio>
+
+  <div class="audio-pill" id="audioToggle" onclick="toggleAudio()">
+    🔊 <span>Music On</span>
+  </div>
+
+  <canvas id="fxCanvas"></canvas>
+
+  <div class="app-container">
+    <div class="festival-tag">TAMASO MA JYOTIRGAMAYA (तमसो मा ज्योतिर्गमय) ✨</div>
+    <h1 class="main-title">ANVIT'S FIRST DIWALI</h1>
+    <div class="family-subtitle">7 Sacred Blessings for Our Little Sunshine 🪔</div>
+    <p class="instruction-text" id="guideText">Tap each Diya to awaken a blessing and cherish our memories</p>
+
+    <!-- Progress Indicator -->
+    <div class="progress-dots" id="dotsContainer">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <!-- Active Memory Reveal Card (Defaults to Dad & Son Hero on load) -->
+    <div class="memory-card" id="memoryCard">
+      <div class="memory-thumb-wrap">
+        <img id="memImg" src="dad-son.jpg" alt="Aayush & Anvit">
+      </div>
+      <div class="memory-details">
+        <div class="memory-tag" id="memTag">Welcome • स्वागतम् ✨</div>
+        <div class="memory-heading" id="memTitle">Aayush & Anvit</div>
+        <div class="memory-note" id="memDesc">Twin festive blues! Tap the first diya below to begin unwrapping our sacred family blessings.</div>
+      </div>
+    </div>
+
+    <!-- Altar Mandala -->
+    <div class="altar-arena" id="altar">
+      <div class="rangoli-border"></div>
+      <div class="central-symbol" id="centerIcon">🪔</div>
+    </div>
+
+    <!-- Final Master Celebration Card -->
+    <div class="final-card" id="finalCard">
+      <div class="final-gold-head">ALL 7 DIYAS ARE GLOWING ✨</div>
+      
+      <!-- Centerpiece Family Photo -->
+      <div class="grand-photo-frame">
+        <div class="grand-photo-inner">
+          <img id="grandPhoto" src="family-portrait.jpg" alt="Aayush Madhuri Anvit">
+        </div>
+      </div>
+
+      <p class="final-blessing-text">
+        Our little diya, <strong>Anvit</strong>, has brought endless light, joy, and giggles into our lives. On his very first Deepavali, we seek your heartfelt blessings and wish you and everyone at home lifelong health, peace, prosperity, and boundless happiness!
+      </p>
+
+      <div class="signature-area">
+        <span class="regards-text">With endless love & festive regards,</span>
+        <span class="family-signature">Aayush, Madhuri & Anvit</span>
+      </div>
+
+      <button class="btn-relight" onclick="resetExperience()">🔄 Relight the Diyas</button>
+    </div>
+  </div>
+
+  <script>
+    /* ========================================================
+       7 CURATED BLESSINGS & UNIQUE FAMILY PHOTOS
+       ======================================================== */
+    var FAMILY_MEMORIES = [
+      {
+        tag: "Diya 1 • Aashirwad (बुजुर्गों का आशीर्वाद)",
+        title: "Roots of Love & Protection",
+        desc: "Held in the gentle, protective warmth of Dada & Dadi on the day he arrived.",
+        img: "dada-dadi.jpg"
+      },
+      {
+        tag: "Diya 2 • Vatsalya (माँ का आँचल)",
+        title: "Purest Love & Comfort",
+        desc: "Safe in Maa's loving arms, sharing the sweetest smiles and innocent comfort.",
+        img: "anvit-mom.jpg"
+      },
+      {
+        tag: "Diya 3 • Bal Gopal (नटखट कान्हा)",
+        title: "Our Little Kanha",
+        desc: "Dressed in holy yellow with mor-pankh, blessing our home with divine innocence.",
+        img: "anvit-krishna.jpg"
+      },
+      {
+        tag: "Diya 4 • Kilkaari (मासूमियत और मुस्कान)",
+        title: "Laughter in Every Corner",
+        desc: "Playful tummy time, curious eyes, and giggles that fill every corner of our home.",
+        img: "anvit-crawling.jpg"
+      },
+      {
+        tag: "Diya 5 • Chhaya (दादाजी का दुलार)",
+        title: "A Grandfather's Pride",
+        desc: "Generations of warmth and care walking together into the light.",
+        img: "anvit-dadaji.jpg"
+      },
+      {
+        tag: "Diya 6 • Sambal (पिता का संबल और साथ)",
+        title: "Like Father, Like Son",
+        desc: "Standing tall in matching festive blues with Papa, ready to conquer the world with love and courage.",
+        img: "dad-son.jpg"
+      },
+      {
+        tag: "Diya 7 • Ekta (हमारा छोटा सा संसार)",
+        title: "Three Hearts, One Beat",
+        desc: "Our complete circle of love, laughter, and lifelong devotion.",
+        img: "family-portrait.jpg"
+      }
+    ];
+
+    var GRAND_FINALE_IMAGE = "family-portrait.jpg";
+
+    /* Audio Synthesis & Music */
+    var NOTES = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88];
+    var audioCtx = null;
+    var music = document.getElementById('bgMusic');
+    var isPlaying = false;
+
+    function playNote(index) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(NOTES[index] || 440, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.2);
+      } catch (e) {}
+    }
+
+    function playFinaleChord() {
+      var finaleNotes = [261.63, 329.63, 392.00, 523.25];
+      finaleNotes.forEach(function(freq, i) {
+        setTimeout(function() {
+          try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2.5);
+          } catch (e) {}
+        }, i * 140);
+      });
+    }
+
+    function toggleAudio() {
+      var btn = document.getElementById('audioToggle');
+      if (isPlaying) {
+        music.pause();
+        isPlaying = false;
+        btn.innerHTML = '🔇 <span>Music Off</span>';
+      } else {
+        music.play().catch(function(){});
+        isPlaying = true;
+        btn.innerHTML = '🔊 <span>Music On</span>';
+      }
+    }
+
+    /* Diyas & Memory Interaction */
+    var altar = document.getElementById('altar');
+    var dots = document.querySelectorAll('.dot');
+    var litCount = 0;
+
+    function setupDiyas() {
+      altar.querySelectorAll('.diya-node').forEach(function(el){ el.remove(); });
+      litCount = 0;
+
+      var radius = 120;
+      var cx = 165;
+      var cy = 165;
+
+      for (var i = 0; i < 7; i++) {
+        var angle = (i * (360 / 7) - 90) * (Math.PI / 180);
+        var x = cx + radius * Math.cos(angle);
+        var y = cy + radius * Math.sin(angle);
+
+        var node = document.createElement('div');
+        node.className = 'diya-node';
+        node.style.left = x + 'px';
+        node.style.top = y + 'px';
+        node.dataset.index = i;
+
+        node.innerHTML = `
+          <div class="diya-aura"></div>
+          <svg class="diya-svg" viewBox="0 0 100 100" fill="none">
+            <ellipse cx="50" cy="76" rx="34" ry="7" fill="rgba(0,0,0,0.5)" />
+            <path d="M12 55 C12 78 88 78 88 55 C88 50 78 48 50 48 C22 48 12 50 12 55 Z" fill="url(#clay_${i})"/>
+            <ellipse cx="50" cy="54" rx="35" ry="5" fill="#782305"/>
+            <g class="flame-element">
+              <path d="M50 16 C42 30 36 41 36 52 C36 60 42 64 50 64 C58 64 64 60 64 52 C64 41 58 30 50 16 Z" fill="url(#fire_${i})"/>
+              <path d="M50 28 C45 38 41 45 41 53 C41 58 45 61 50 61 C55 61 59 58 59 53 C59 45 55 38 50 28 Z" fill="#ffffff"/>
+            </g>
+            <defs>
+              <linearGradient id="clay_${i}" x1="0%" y1="0%" x2="0%" y2="1">
+                <stop offset="0%" stop-color="#ea580c"/>
+                <stop offset="100%" stop-color="#431407"/>
+              </linearGradient>
+              <linearGradient id="fire_${i}" x1="0%" y1="0%" x2="0%" y2="1">
+                <stop offset="0%" stop-color="#fef08a"/>
+                <stop offset="50%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#dc2626"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="diya-count-badge">${i + 1}</div>
+        `;
+
+        node.addEventListener('click', onDiyaClick);
+        altar.appendChild(node);
+      }
+    }
+
+    function onDiyaClick(e) {
+      var node = e.currentTarget;
+      if (node.classList.contains('lit')) return;
+
+      if (!isPlaying) {
+        music.play().then(function() { isPlaying = true; }).catch(function(){});
+      }
+
+      if (navigator.vibrate) navigator.vibrate(40);
+
+      var idx = parseInt(node.dataset.index, 10);
+      node.classList.add('lit');
+      litCount++;
+
+      playNote(idx);
+      var rect = node.getBoundingClientRect();
+      spawnSparkBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 28);
+
+      dots[idx].classList.add('active');
+
+      // Update Memory Card
+      var mem = FAMILY_MEMORIES[idx];
+      var card = document.getElementById('memoryCard');
+      card.style.opacity = '0.3';
+      card.style.transform = 'scale(0.96)';
+
+      setTimeout(function() {
+        document.getElementById('memTag').textContent = mem.tag;
+        document.getElementById('memTitle').textContent = mem.title;
+        document.getElementById('memDesc').textContent = mem.desc;
+        document.getElementById('memImg').src = mem.img;
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+      }, 200);
+
+      document.body.style.background = `radial-gradient(circle at 50% 25%, rgb(${29 + litCount*6}, ${7 + litCount*3}, ${46 + litCount*2}) 0%, #0c0217 65%, #030008 100%)`;
+
+      if (litCount === 7) {
+        triggerGrandFinale();
+      }
+    }
+
+    function triggerGrandFinale() {
+      playFinaleChord();
+      if (navigator.vibrate) navigator.vibrate([60, 50, 60, 50, 100]);
+
+      document.getElementById('guideText').textContent = "All 7 Blessings Awakened for Anvit ✨";
+      document.getElementById('centerIcon').style.opacity = '1';
+      document.getElementById('centerIcon').style.transform = 'scale(1.3)';
+      document.getElementById('centerIcon').textContent = '🪔✨';
+
+      document.getElementById('grandPhoto').src = GRAND_FINALE_IMAGE;
+
+      for (var k = 0; k < 7; k++) {
+        setTimeout(function() {
+          spawnSparkBurst(
+            window.innerWidth * (0.15 + Math.random() * 0.7),
+            window.innerHeight * (0.15 + Math.random() * 0.35),
+            50
+          );
+          spawnPetalShower(35);
+        }, k * 300);
+      }
+
+      setTimeout(function() {
+        var card = document.getElementById('finalCard');
+        card.style.display = 'block';
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 900);
+    }
+
+    function resetExperience() {
+      litCount = 0;
+      dots.forEach(function(d){ d.classList.remove('active'); });
+      document.getElementById('finalCard').style.display = 'none';
+      document.getElementById('guideText').textContent = "Tap each Diya to awaken a blessing and cherish our memories";
+      document.getElementById('centerIcon').textContent = '🪔';
+      document.getElementById('centerIcon').style.transform = 'scale(1)';
+      document.body.style.background = 'radial-gradient(circle at 50% 25%, #1d072e 0%, #0c0217 60%, #030008 100%)';
+      
+      // Reset Memory card to Hero Dad-Son
+      document.getElementById('memTag').textContent = "Welcome • स्वागतम् ✨";
+      document.getElementById('memTitle').textContent = "Aayush & Anvit";
+      document.getElementById('memDesc').textContent = "Twin festive blues! Tap the first diya below to begin unwrapping our sacred family blessings.";
+      document.getElementById('memImg').src = "dad-son.jpg";
+
+      setupDiyas();
+    }
+
+    /* FX Canvas (Petals & Fireworks) */
+    var canvas = document.getElementById('fxCanvas');
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var petals = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    for (var p = 0; p < 16; p++) {
+      petals.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 7 + 6,
+        vy: Math.random() * 0.6 + 0.4,
+        vx: (Math.random() - 0.5) * 0.4,
+        rot: Math.random() * Math.PI,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        color: Math.random() > 0.4 ? '#f59e0b' : '#ef4444'
+      });
+    }
+
+    function spawnPetalShower(count) {
+      for (var i = 0; i < count; i++) {
+        petals.push({
+          x: Math.random() * canvas.width,
+          y: -20,
+          size: Math.random() * 8 + 6,
+          vy: Math.random() * 1.6 + 1.2,
+          vx: (Math.random() - 0.5) * 1.2,
+          rot: Math.random() * Math.PI,
+          rotSpeed: (Math.random() - 0.5) * 0.04,
+          color: Math.random() > 0.35 ? '#fbbf24' : '#f43f5e'
+        });
+      }
+    }
+
+    function addSparkTrail(x, y) {
+      var colors = ['#fde047', '#fbbf24', '#f59e0b', '#ffa94d'];
+      for (var i = 0; i < 3; i++) {
+        particles.push({
+          x: x + (Math.random() - 0.5) * 8,
+          y: y + (Math.random() - 0.5) * 8,
+          vx: (Math.random() - 0.5) * 2,
+          vy: Math.random() * -1.5 - 0.5,
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.02,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 2 + 1
+        });
+      }
+    }
+
+    window.addEventListener('pointermove', function(e) {
+      addSparkTrail(e.clientX, e.clientY);
+    });
+
+    function spawnSparkBurst(x, y, count) {
+      var colors = ['#f59e0b', '#fbbf24', '#fef08a', '#ef4444', '#10b981', '#38bdf8', '#fb7185'];
+      for (var i = 0; i < count; i++) {
+        var angle = Math.random() * Math.PI * 2;
+        var speed = Math.random() * 4.8 + 1.2;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.01,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 2.5 + 1
+        });
+      }
+    }
+
+    function renderLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (var j = 0; j < petals.length; j++) {
+        var pt = petals[j];
+        pt.y += pt.vy;
+        pt.x += pt.vx;
+        pt.rot += pt.rotSpeed;
+
+        if (pt.y > canvas.height + 20) {
+          pt.y = -20;
+          pt.x = Math.random() * canvas.width;
+        }
+
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.globalAlpha = 0.55;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, pt.size, pt.size * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      for (var i = particles.length - 1; i >= 0; i--) {
+        var p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.035;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(p.alpha, 0);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      requestAnimationFrame(renderLoop);
+    }
+    requestAnimationFrame(renderLoop);
+
+    setupDiyas();
+  </script>
+</body>
+</html>
